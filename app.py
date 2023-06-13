@@ -8,7 +8,7 @@ import requests
 app = Flask(__name__)
 
 # Configure OpenAI API credentials
-openai.api_key = "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"
+openai.api_key = "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"
 
 @app.route('/', methods=['POST'])
 def main():
