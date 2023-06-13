@@ -3,6 +3,7 @@ import logging
 import openai
 from urllib.parse import parse_qs
 import json
+import requests
 
 app = Flask(__name__)
 
@@ -37,7 +38,25 @@ def main():
                 response_data["reply"] = "Unable to generate a response."
                 response_data["status"] = "failure"
 
-            return jsonify(response_data), 200
+            # Call Zapier API
+            zapier_url = "https://hooks.zapier.com/hooks/catch/15590813/3hy38zl/"
+            zapier_payload = {
+                "app": app,
+                "sender": sender,
+                "message": message,
+                "reply": response
+            }
+
+            try:
+                response = requests.post(zapier_url, json=zapier_payload)
+                # Handle the response from Zapier if needed
+                # ...
+
+                return jsonify(response_data), 200
+            except requests.exceptions.RequestException as e:
+                logging.error(f'Error calling Zapier API: {str(e)}')
+                return 'Error calling Zapier API', 500
+
         except ValueError as e:
             logging.error(f'Error parsing request body: {str(e)}')
             return 'Invalid request body', 400
